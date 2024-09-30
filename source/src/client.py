@@ -79,7 +79,7 @@ def main():
     file = parsed_values[2]
     print(parsed_values)
     client_socket = connect_to_server(port_num, ip_address)
-    print("Connected to server on port number " + port_num + " at IP address " + ip_address)
+    print("Connected to server on port number " + str(port_num) + " at IP address " + ip_address)
     send_request(file, client_socket)
     recieve_request(client_socket)
     close_connection(client_socket)
