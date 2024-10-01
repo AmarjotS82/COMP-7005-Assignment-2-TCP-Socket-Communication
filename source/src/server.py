@@ -83,7 +83,8 @@ def handle_client_request(file_content, connection):
     num_of_letters = count_letters_case_sensitive(file_content)
     # time.sleep(20)
     try:
-        connection.send(str.encode(num_of_letters))
+        str_num_of_letters  = str(num_of_letters)
+        connection.send(str.encode(str_num_of_letters))
     except BrokenPipeError:
         print("Client Disconnected\n")
 
