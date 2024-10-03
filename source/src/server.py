@@ -24,8 +24,8 @@ def parse_arguments(args):
         port_num = args[index + 1]
         parsed_args.append(int(port_num))
     
-    name = socket.gethostname()
-    ip_address = socket.gethostbyname(name)
+
+    ip_address = socket.INADDR_ANY
     parsed_args.append(ip_address)
     return parsed_args 
 
