@@ -1,7 +1,7 @@
 import socket
-import os
 import sys
-import time
+
+
 
 def handle_arguments(args):
     if len(args) < 2:
@@ -16,6 +16,7 @@ def handle_arguments(args):
 
     
     return args
+    
 
 def parse_arguments(args):
     parsed_args = []
@@ -30,8 +31,9 @@ def parse_arguments(args):
     return parsed_args 
 
 def handle_client_connection(server_socket):
-    
     conn, addr = server_socket.accept()
+    print(conn)
+    print(addr)
     if conn:
         print("accepted client connection...")
     return conn
@@ -43,17 +45,24 @@ def start_server(parsed_args):
 
     new_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        new_socket.bind((ip_address, port_num))
+        new_socket.bind((str(ip_address), port_num))
     except PermissionError:
         sys.exit("Permision denied! Use another port number!")
-
+    new_socket.listen(10)
     while(True):
         try:
-            new_socket.listen(10)
-            print("Server is listening on port number " + str(port_num) + " at IP address " + ip_address)
+   
+            print("Server is listening on port number " + str(port_num) + " at IP address " + str(ip_address))
+            print(new_socket)
             connection = handle_client_connection(new_socket)
+
+            # data = ""
+            
             recieved_data = connection.recv(1024)
             decoded_data = recieved_data.decode("utf-8")
+            #  while loop where keep going until all message sent(get by passing the length of the message and sending parts until the total size is length of message)
+            # data += decoded_data
+            # print("Data: " + data)
             handle_client_request(decoded_data, connection)
         except KeyboardInterrupt:
             try:
@@ -67,11 +76,12 @@ def start_server(parsed_args):
             sys.exit("\nServer disconnected")
         
 def count_letters_case_sensitive(file_content):
+
     unique_letters = []
-    all_letters = list(file_content)
-    for letter in all_letters:
-        if letter not in unique_letters:
-            unique_letters.append(letter)
+    content_as_letters = list(file_content)
+    for char in content_as_letters:
+        if char not in unique_letters and char.isalpha():
+            unique_letters.append(char)
     
     number_of_unique_letters = len(unique_letters)
     return number_of_unique_letters

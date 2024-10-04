@@ -20,9 +20,16 @@ def get_file_content(fileName):
 
 def send_request(file, connected_socket):
     print("sending request...")
-    contents = get_file_content()
+    contents = get_file_content(file)
     # byte_of_contes = bytes(contents)
     connected_socket.send(str.encode(contents))
+    # content_less_than_buffer = ""
+    # for char in list(contents):
+    #     if len(str.encode(content_less_than_buffer)) < 1024:
+    #         content_less_than_buffer += char
+    #     else:
+    #         connected_socket.send(str.encode(content_less_than_buffer))
+    #         content_less_than_buffer = ""
 
 def recieve_request(connected_socket):
     print("recievieng request...")
