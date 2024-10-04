@@ -58,12 +58,17 @@ def start_server(parsed_args):
 
             # data = ""
             
-            recieved_data = connection.recv(1024)
-            decoded_data = recieved_data.decode("utf-8")
+            
+            while True: 
+                recieved_data = connection.recv(1024)
+                if not recieved_data: 
+                    break
+                decoded_data =  recieved_data.decode("utf-8")
+                handle_client_request(decoded_data, connection)
             #  while loop where keep going until all message sent(get by passing the length of the message and sending parts until the total size is length of message)
             # data += decoded_data
             # print("Data: " + data)
-            handle_client_request(decoded_data, connection)
+            
         except KeyboardInterrupt:
             try:
                 try: 

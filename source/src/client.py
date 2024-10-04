@@ -11,16 +11,20 @@ def connect_to_server(port_num, ip_addr):
         sys.exit("Error: File not found, check that the server is listening and the socket path is the same")
     return new_socket
 
-def get_file_content(fileName):
-    contents = ""
+def send_file_content(fileName, connected_socket):
+    
     with open(fileName) as f:
-        contents = f.read()
-        print(contents)
-    return contents
+        while True:
+            contents = f.read(1024)
+            if not contents:
+                break
+            print(contents)
+            connected_socket.send(str.encode(contents))
 
 def send_request(file, connected_socket):
     print("sending request...")
-    contents = get_file_content(file)
+    contents = send_file_content(file, connected_socket)
+        
     # byte_of_contes = bytes(contents)
     connected_socket.send(str.encode(contents))
     # content_less_than_buffer = ""
