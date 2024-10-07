@@ -8,12 +8,13 @@ def handle_arguments(args):
         sys.exit("Error: no arguments provided")
     if len(args) > 3:
         sys.exit("Error: Too many arguments provided")
-    if "-p" in args:
-        try:
-            index = args.index("-p")
-        except ValueError:
-            sys.exit("Error: need -p flag before port number")
+    try:
+        index = args.index("-p")
+    except ValueError:
+        sys.exit("Error: need -p flag before port number")
 
+    if (index+1) == len(args):
+        sys.exit("Error: No port number provided!")
     
     return args
     
@@ -21,9 +22,12 @@ def handle_arguments(args):
 def parse_arguments(args):
     parsed_args = []
     index = args.index("-p")
-    if (index+1) != len(args):
-        port_num = args[index + 1]
-        parsed_args.append(int(port_num))
+    port_num = args[index + 1]
+    try:
+        int_rep_port_num = int(port_num)
+    except ValueError:
+        sys.exit("Error: Invalid port number!")
+    parsed_args.append(int_rep_port_num)
     
 
     ip_address = socket.INADDR_ANY
@@ -42,11 +46,10 @@ def recieve_data(connection):
     while True: 
         recieved_data = connection.recv(1024)
         decoded_data =  recieved_data.decode("utf-8")
+        ("reading data chunk...")
         if "EndofFile" in decoded_data : 
-            print("Stopped recieving")
-            print(decoded_data)
+            print("End of file done recieveing")
             message_before_marker = decoded_data.split("EndofFile")[0].strip()
-            print(message_before_marker)
             data += message_before_marker
             handle_client_request(data, connection)
             break
@@ -66,7 +69,7 @@ def start_server(parsed_args):
     while(True):
         try:
    
-            print("Server is listening on port number " + str(port_num) + " at IP address " + str(ip_address))
+            print("Server is listening on port number " + str(port_num))
             connection = handle_client_connection(new_socket)
             recieve_data(connection)
 

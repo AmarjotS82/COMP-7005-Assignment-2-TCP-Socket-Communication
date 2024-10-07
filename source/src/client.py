@@ -6,7 +6,12 @@ def connect_to_server(port_num, ip_addr):
     try:
         new_socket.connect((ip_addr, port_num))
     except ConnectionRefusedError:
-        sys.exit("Error: Connection refused server is not listening")
+        sys.exit("Error: Connection refused the either the server is not listening or the port number is incorrect!")
+    except OSError as error:
+        if error.errno == 113:
+            sys.exit("The IP address can't be found make sure it is an IP address on the server device")
+        if error.errno == -3:
+            sys.exit("Invalid IP address")
     return new_socket
 
 def send_file_content(fileName, connected_socket):
@@ -23,9 +28,11 @@ def send_file_content(fileName, connected_socket):
             connected_socket.send(str.encode(contents))
 
 def send_request(file, connected_socket):
-    print("sending request...")
-    send_file_content(file, connected_socket)
-        
+    try:
+        send_file_content(file, connected_socket)
+        print("sending request...")
+    except FileNotFoundError:
+        sys.exit("File not found!Check file name")    
     # byte_of_contes = bytes(contents)
  
     # content_less_than_buffer = ""
@@ -57,9 +64,9 @@ def handle_arguments(args):
         sys.exit("Error: Too many arguments provided")
     
     for i in range(len(flags)):
+        arg_label = ""
         try:
             index = args.index(flags[i])
-            arg_label = ""
             if i == 0:
                 arg_label += "port number"
             elif i == 1:
@@ -69,7 +76,7 @@ def handle_arguments(args):
         except ValueError:
             sys.exit("Error: need " + flags[i] + " flag before " + arg_label)
 
-        if len(args) == (index+1) or not args[(index+1)].strip():
+        if (index + 1 >= len(args)) or (not args[index + 1].strip()) or (args[index + 1] in flags):
             sys.exit("Error: no " + arg_label + " provided")   
     return args
 
@@ -79,6 +86,9 @@ def parse_arguments(args):
     for i in range(len(flags)):
         index = args.index(flags[i])
         parsed_value = args[index + 1]
+        if i == 2:
+            if ".txt" not in parsed_value:
+                sys.exit("Invalid file extension! Only takes .txt files")
         parsed_values.append(parsed_value)
     return parsed_values 
 
@@ -89,8 +99,10 @@ def main():
     cmd_args = sys.argv
     validated_args = handle_arguments(cmd_args)
     parsed_values = parse_arguments(validated_args)
-
-    port_num = int(parsed_values[0])
+    try:
+        port_num = int(parsed_values[0])
+    except ValueError:
+        sys.exit("Error: Invalid port number!")
     ip_address = parsed_values[1]
     file = parsed_values[2]
     print(parsed_values)
