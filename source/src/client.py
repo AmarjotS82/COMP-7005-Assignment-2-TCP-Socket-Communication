@@ -7,26 +7,27 @@ def connect_to_server(port_num, ip_addr):
         new_socket.connect((ip_addr, port_num))
     except ConnectionRefusedError:
         sys.exit("Error: Connection refused server is not listening")
-    except FileNotFoundError:
-        sys.exit("Error: File not found, check that the server is listening and the socket path is the same")
     return new_socket
 
 def send_file_content(fileName, connected_socket):
-    
+    i = 0
     with open(fileName) as f:
         while True:
             contents = f.read(1024)
             if not contents:
+                print("Done reading")
+                connected_socket.send(str.encode("EndofFile"))
                 break
-            print(contents)
+            print("Chunk: " + str(i))
+            i +=1
             connected_socket.send(str.encode(contents))
 
 def send_request(file, connected_socket):
     print("sending request...")
-    contents = send_file_content(file, connected_socket)
+    send_file_content(file, connected_socket)
         
     # byte_of_contes = bytes(contents)
-    connected_socket.send(str.encode(contents))
+ 
     # content_less_than_buffer = ""
     # for char in list(contents):
     #     if len(str.encode(content_less_than_buffer)) < 1024:
