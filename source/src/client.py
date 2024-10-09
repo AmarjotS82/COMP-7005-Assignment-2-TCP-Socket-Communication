@@ -33,15 +33,6 @@ def send_request(file, connected_socket):
         send_file_content(file, connected_socket)
     except FileNotFoundError:
         sys.exit("Error: File not found! Check file name")    
-    # byte_of_contes = bytes(contents)
- 
-    # content_less_than_buffer = ""
-    # for char in list(contents):
-    #     if len(str.encode(content_less_than_buffer)) < 1024:
-    #         content_less_than_buffer += char
-    #     else:
-    #         connected_socket.send(str.encode(content_less_than_buffer))
-    #         content_less_than_buffer = ""
 
 def recieve_request(connected_socket):
     print("recievieng request...")

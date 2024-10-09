@@ -96,20 +96,18 @@ def count_letters_case_sensitive(file_content):
             unique_letters.append(char)
     
     number_of_unique_letters = len(unique_letters)
+    print("Count of " + str(number_of_unique_letters))
     return number_of_unique_letters
         
 
 
 def handle_client_request(file_content, connection):
     print("handling client request...")
-    # print(file_content)
     # time.sleep(10)
     num_of_letters = count_letters_case_sensitive(file_content)
-    try:
-        str_num_of_letters  = str(num_of_letters)
-        connection.send(str.encode(str_num_of_letters))
-    except BrokenPipeError:
-        print("Client Disconnected\n")
+    str_num_of_letters  = str(num_of_letters)
+    connection.send(str.encode(str_num_of_letters))
+
 
 
 def main():
