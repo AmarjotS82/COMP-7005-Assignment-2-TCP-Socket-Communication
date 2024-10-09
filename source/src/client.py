@@ -9,9 +9,9 @@ def connect_to_server(port_num, ip_addr):
         sys.exit("Error: Connection refused the either the server is not listening or the port number is incorrect!")
     except OSError as error:
         if error.errno == 113:
-            sys.exit("The IP address can't be found make sure it is an IP address on the server device")
+            sys.exit("Error: The IP address can't be found make sure it is an IP address on the server device")
         if error.errno == -3:
-            sys.exit("Invalid IP address")
+            sys.exit("Error: Invalid IP address")
     return new_socket
 
 def send_file_content(fileName, connected_socket):
@@ -28,11 +28,11 @@ def send_file_content(fileName, connected_socket):
             connected_socket.send(str.encode(contents))
 
 def send_request(file, connected_socket):
+    print("sending request...")
     try:
         send_file_content(file, connected_socket)
-        print("sending request...")
     except FileNotFoundError:
-        sys.exit("File not found!Check file name")    
+        sys.exit("Error: File not found! Check file name")    
     # byte_of_contes = bytes(contents)
  
     # content_less_than_buffer = ""
@@ -50,7 +50,7 @@ def recieve_request(connected_socket):
     except ConnectionResetError:
         sys.exit("Error: Server disconnected")
     except KeyboardInterrupt:
-        close_connection(connected_socket)
+        connected_socket.close()  
         sys.exit("\nYou have disconnected from the server")
     print(data.decode("utf-8"))
 
@@ -88,7 +88,7 @@ def parse_arguments(args):
         parsed_value = args[index + 1]
         if i == 2:
             if ".txt" not in parsed_value:
-                sys.exit("Invalid file extension! Only takes .txt files")
+                sys.exit("Error: Invalid file extension! Only takes .txt files")
         parsed_values.append(parsed_value)
     return parsed_values 
 
@@ -105,7 +105,7 @@ def main():
         sys.exit("Error: Invalid port number!")
     ip_address = parsed_values[1]
     file = parsed_values[2]
-    print(parsed_values)
+ 
     client_socket = connect_to_server(port_num, ip_address)
     print("Connected to server on port number " + str(port_num) + " at IP address " + ip_address)
     send_request(file, client_socket)
